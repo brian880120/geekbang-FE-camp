@@ -28,10 +28,10 @@ class Scope {
   }
 
   findDefiningScope(element: string): Scope | null {
-    return this.findScope(this, element);
+    return Scope.findScope(this, element);
   }
 
-  findScope(scope: Scope, element: string): Scope | null {
+  static findScope(scope: Scope, element: string): Scope | null {
     if (scope.parent === null) {
       if (scope.names.has(element)) return scope;
       return null;
