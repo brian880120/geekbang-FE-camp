@@ -1,6 +1,8 @@
 import * as  acorn from 'acorn';
 import { getMagicString } from './magicString';
 
+export type AstNode = any;
+
 export const getAst = (code: string) => {
   const ast: any = acorn.parse(code, {
     locations: true,
@@ -20,21 +22,21 @@ const code = `
 
 const { getSnipByPosition } = getMagicString(code);
 
-const declarations: { [name: string]: any } = {};
+const declarations: { [name: string]: AstNode } = {};
 
-const statements: any[] = [];
+const statements: AstNode[] = [];
 
 const ast = getAst(code);
 
-ast.body.filter((node: any) => {
+ast.body.filter((node: AstNode) => {
   return node.type === 'VariableDeclaration';
-}).forEach((node: any) => {
+}).forEach((node: AstNode) => {
   declarations[node.declarations[0].id.name] = node;
 });
 
-ast.body.filter((node: any) => {
+ast.body.filter((node: AstNode) => {
   return node.type === 'ExpressionStatement';
-}).forEach((node: any) => {
+}).forEach((node: AstNode) => {
   const callee = node.expression.callee.name;
   statements.push(declarations[callee]);
   statements.push(node);

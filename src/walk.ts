@@ -1,9 +1,11 @@
+import { AstNode } from "./ast";
+
 interface ICallbacks {
-  enter: (node: any, parent: any) => void;
-  leave: (node: any, parent: any) => void;
+  enter: (node: AstNode, parent: AstNode) => void;
+  leave: (node: AstNode, parent: AstNode) => void;
 }
 
-const walk = (ast: any, invokers: ICallbacks) => {
+const walk = (ast: AstNode, invokers: ICallbacks) => {
   visit(ast, null, invokers.enter, invokers.leave);
 }
 
@@ -15,7 +17,7 @@ const walk = (ast: any, invokers: ICallbacks) => {
     @params {*} leave invoke when leave a node
 */
 
-const visit = (node: any, parent: any, enter: (node: any, parent: any) => void, leave: (node: any, parent: any) => void) => {
+const visit = (node: AstNode, parent: AstNode, enter: (node: AstNode, parent: AstNode) => void, leave: (node: AstNode, parent: AstNode) => void) => {
   enter(node, parent);
 
   //recursive call

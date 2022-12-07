@@ -1,13 +1,13 @@
-import MagicString from 'magic-string';
+import { AstNode } from './ast';
 import Scope from './scope';
 import { walk } from './walk';
 
-const analyzer = (ast: any, magicString: any) => {
+const analyzer = (ast: AstNode, magicString: any) => {
   const root = new Scope();
   ast._scope = root;
   let currentScope = ast._scope;
 
-  const enter = (node: any) => {
+  const enter = (node: AstNode) => {
     if (node.type === 'FunctionDeclaration') {
       node._scope = new Scope({ parent: currentScope });
       currentScope = node._scope;
@@ -17,13 +17,13 @@ const analyzer = (ast: any, magicString: any) => {
     }
   };
 
-  const leave = (node: any) => {
+  const leave = (node: AstNode) => {
     if (node.type === 'FunctionDeclaration') {
       currentScope = node._scope.parent;
     }
   };
 
-  ast.body.forEach((node: any) => {
+  ast.body.forEach((node: AstNode) => {
     walk(node, { enter, leave });
   });
 };

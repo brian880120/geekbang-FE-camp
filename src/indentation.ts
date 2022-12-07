@@ -1,4 +1,5 @@
 import * as acorn from "acorn";
+import { AstNode } from "./ast";
 import { walk } from "./walk";
 
 const code = `
@@ -12,7 +13,7 @@ const code = `
   }
 `;
 
-const ast: any = acorn.parse(code, {
+const ast: AstNode = acorn.parse(code, {
   locations: true,
   ranges: true,
   sourceType: 'module',
