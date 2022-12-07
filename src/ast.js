@@ -9,7 +9,7 @@ const getSnipByPosition = (start, end) => {
   return magicString.snip(start, end).toString();
 }
 
-const vst = acorn.parse(code, {
+const ast = acorn.parse(code, {
   locations: true,
   ranges: true,
   sourceType: 'module',
@@ -22,22 +22,20 @@ const declarations = {};
 
 const statements = [];
 
-vst.body.forEach(node => {
-  if (node.type === 'VariableDeclaration') {
-    const elem = node.declarations[0];
-    const start = node.start;
-    const end = node.end;
-    declarations[elem.id.name] = getSnipByPosition(start, end);
-  }
-
-  if (node.type === 'ExpressionStatement') {
-    const callerName = node.expression.callee.name;
-    const { start, end } = node;
-    const statement = getSnipByPosition(start, end);
-    statements.push(declarations[callerName]);
-    statements.push(statement);
-  }
+ast.body.filter((node) => {
+  return node.type === 'VariableDeclaration';
+}).forEach(node => {
+  declarations[node.declarations[0].id.name] = node;
 });
 
-console.log('statements');
-console.log(statements.join(''));
+ast.body.filter(node => {
+  return node.type === 'ExpressionStatement';
+}).forEach(node => {
+  const callee = node.expression.callee.name;
+  statements.push(declarations[callee]);
+  statements.push(node);
+});
+
+statements.forEach(node => {
+  console.log(getSnipByPosition(node.start, node.end));
+});

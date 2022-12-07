@@ -1,6 +1,6 @@
 interface ICallbacks {
-  enter: (node: any) => void;
-  leave: (node: any) => void;
+  enter: (node: any, parent: any) => void;
+  leave: (node: any, parent: any) => void;
 }
 
 const walk = (ast: any, invokers: ICallbacks) => {
@@ -15,8 +15,8 @@ const walk = (ast: any, invokers: ICallbacks) => {
     @params {*} leave invoke when leave a node
 */
 
-const visit = (node: any, parent: any, enter: (node: any) => void, leave: (node: any) => void) => {
-  enter(node);
+const visit = (node: any, parent: any, enter: (node: any, parent: any) => void, leave: (node: any, parent: any) => void) => {
+  enter(node, parent);
 
   //recursive call
   if (Array.isArray(node)) {
@@ -30,7 +30,7 @@ const visit = (node: any, parent: any, enter: (node: any) => void, leave: (node:
       }
     });
   }
-  leave(node);
+  leave(node, parent);
 }
 
 export {
