@@ -1,21 +1,17 @@
-interface INode {
+type Node = {
   parent: Scope;
-}
-  
-type Node = INode | string;
+};
 
 class Scope {
-  node: Node;
   parent: Scope | null;
   names: Set<string>;
 
-  constructor(node: Node) {
-    if (typeof node !== 'string') {
+  constructor(node?: Node) {
+    if (node) {
       this.parent = node.parent;
     } else {
       this.parent = null;
     }
-    this.node = node;
     this.names = new Set<string>();
   }
 
@@ -24,7 +20,7 @@ class Scope {
   }
 
   contains(element: string): boolean {
-    return this.findDefiningScope(element) !== undefined;
+    return this.findDefiningScope(element) !== null;
   }
 
   findDefiningScope(element: string): Scope | null {

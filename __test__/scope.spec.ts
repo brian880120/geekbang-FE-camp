@@ -7,7 +7,7 @@ describe('test scope', () => {
     // const f = () => {
     //   const b = 2;
     // };
-    const root = new Scope('world');
+    const root = new Scope();
     root.add('a');
 
     const child = new Scope({ parent: root });
@@ -24,7 +24,7 @@ describe('test scope', () => {
     // const f = () => {
     //   const b = 2;
     // };
-    const root = new Scope('world');
+    const root = new Scope();
     root.add('a');
 
     const level2 = new Scope({ parent: root });

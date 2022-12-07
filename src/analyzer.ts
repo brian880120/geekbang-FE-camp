@@ -3,7 +3,7 @@ import Scope from './scope';
 import { walk } from './walk';
 
 const analyzer = (ast: any, magicString: any) => {
-  const root = new Scope('root');
+  const root = new Scope();
   ast._scope = root;
   let currentScope = ast._scope;
 
