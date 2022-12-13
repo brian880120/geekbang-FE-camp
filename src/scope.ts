@@ -1,5 +1,6 @@
 type Node = {
   parent: Scope;
+  params?: string[];
 };
 
 class Scope {

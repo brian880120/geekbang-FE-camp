@@ -2,29 +2,71 @@ import { AstNode } from './ast';
 import Scope from './scope';
 import { walk } from './walk';
 
-const analyzer = (ast: AstNode, magicString: any) => {
-  const root = new Scope();
-  ast._scope = root;
-  let currentScope = ast._scope;
+const analyzer = (ast: AstNode, magicString: any, module?: any) => {
+  let scope = new Scope();
+  ast._scope = scope;
 
-  const enter = (node: AstNode) => {
-    if (node.type === 'FunctionDeclaration') {
-      node._scope = new Scope({ parent: currentScope });
-      currentScope = node._scope;
-    }
-    if (node.type === 'VariableDeclarator') {
-      currentScope.add(node.id.name);
-    }
-  };
+  ast.body.forEach((statement: AstNode) => {
+    const addToScope = (node: AstNode) => {
+      const name = node.id.name;
+      scope.add(name);
+      if (!scope.parent) {
+        statement._defines[name] = true;
+      }
+    };
 
-  const leave = (node: AstNode) => {
-    if (node.type === 'FunctionDeclaration') {
-      currentScope = node._scope.parent;
-    }
-  };
+    Object.defineProperties(statement, {
+      _defines: { value: {} },
+      _dependsOn: { value: {} },
+    });
 
-  ast.body.forEach((node: AstNode) => {
-    walk(node, { enter, leave });
+    const enter = (node: AstNode) => {
+      let newScope;
+      switch (node.type) {
+        case 'FunctionDeclaration':
+          addToScope(node);
+          const params = node.params.map((v: any) => v.name);
+
+          newScope = new Scope({
+            parent: scope,
+            params,
+          });
+
+          break;
+        case 'VariableDeclaration':
+          node.declarations.forEach(addToScope);
+        default:
+          break;
+      }
+
+      if (newScope) {
+        Object.defineProperties(node, {
+          _scope: { value: newScope },
+        });
+        scope = newScope;
+      }
+    };
+
+    const leave = (node: AstNode) => {
+      if (node._scope) {
+        if (scope.parent) {
+          scope = scope.parent;
+        }
+      }
+    };
+
+    walk(statement, { enter, leave });
+  });
+
+  ast.body.forEach((statement: AstNode) => {
+    walk(statement, {
+      enter(node) {
+        if (node.type === 'Identifier') {
+          statement._dependsOn[node.name] = true;
+        }
+      },
+      leave() {},
+    })
   });
 };
 
