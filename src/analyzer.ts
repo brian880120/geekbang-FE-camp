@@ -1,8 +1,10 @@
+import MagicString from 'magic-string';
 import { AstNode } from './ast';
+import Module from './module';
 import Scope from './scope';
 import { walk } from './walk';
 
-const analyzer = (ast: AstNode, magicString: any, module?: any) => {
+const analyzer = (ast: AstNode, magicString: MagicString, module?: Module) => {
   let scope = new Scope();
   ast._scope = scope;
 

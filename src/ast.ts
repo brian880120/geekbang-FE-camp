@@ -1,4 +1,4 @@
-import * as  acorn from 'acorn';
+import * as acorn from 'acorn';
 import { getMagicString } from './magicString';
 
 export type AstNode = any;
@@ -40,8 +40,4 @@ ast.body.filter((node: AstNode) => {
   const callee = node.expression.callee.name;
   statements.push(declarations[callee]);
   statements.push(node);
-});
-
-statements.forEach(node => {
-  console.log(getSnipByPosition(node.start, node.end));
 });
